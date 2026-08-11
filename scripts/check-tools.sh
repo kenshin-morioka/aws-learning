@@ -19,11 +19,13 @@ REQUIRED_TOOLS=(
   "cfn-lint|CloudFormation / SAM の lint|mise install"
   "checkov|IaC のセキュリティ静的解析|mise install"
   "dot|Graphviz (構成図の描画エンジン)|brew install graphviz"
+  "inframap|Terraform から構成図生成|brew install inframap"
+  "cfn-dia|SAM / CloudFormation から構成図生成|mise install"
 )
 
-# 任意ツール(構成図生成。ステップ5で選定するため現時点では任意扱い)
+# 任意ツール (無くても学習サイクルは回る)
 OPTIONAL_TOOLS=(
-  "inframap|Terraform から構成図生成|brew install inframap"
+  "cargo|Rust のビルド (Rust Lambda を試す場合のみ)|brew install rustup && rustup-init"
 )
 
 missing=0

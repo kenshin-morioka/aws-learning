@@ -16,7 +16,7 @@ TERRAFORM_DIR := terraform
 SAM_DIR := sam
 
 .PHONY: help check-tools fmt fmt-check validate validate-terraform validate-sam \
-	lint lint-tflint lint-cfn lint-checkov diagram check
+	lint lint-tflint lint-cfn lint-checkov diagram diagram-terraform diagram-sam check
 
 # デフォルトターゲット(make だけ打った場合)
 .DEFAULT_GOAL := help
@@ -56,8 +56,13 @@ lint-cfn: ## CloudFormation / SAM の lint
 lint-checkov: ## IaC のセキュリティ静的解析 (Terraform + SAM)
 	$(RUN) checkov --directory $(TERRAFORM_DIR) --directory $(SAM_DIR) --quiet --compact
 
-diagram: ## Terraform と SAM の構成図を生成する
-	@echo "(ステップ5で実装予定)"
+diagram: diagram-terraform diagram-sam ## Terraform と SAM の構成図を生成する
+
+diagram-terraform: ## Terraform から構成図 (SVG) を生成する
+	@bash scripts/generate-terraform-diagram.sh
+
+diagram-sam: ## SAM から構成図 (Mermaid) を生成する
+	@bash scripts/generate-sam-diagram.sh
 
 # check では fmt (書き換え) ではなく fmt-check (確認のみ) を使う
 check: check-tools fmt-check validate lint diagram ## 上記すべてを一括実行する
