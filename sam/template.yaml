@@ -18,10 +18,27 @@ Description: >
 
 Resources:
   # プレースホルダ: CloudFormation は Resources を空にできないため、
-  # 最小の Lambda 関数を 1 つだけ定義している。実装を始めたら自由に置き換えてよい。
+  # 最小の Lambda 関数を定義している。実装を始めたら自由に置き換えてよい。
+  #
+  # --- パターン1: マネージドランタイム (Python) ---
+  # AWS がランタイムを管理してくれる標準的な形。まずはこちらが基本
   HelloFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/hello/ # コードの場所 (ディレクトリ)
       Handler: app.lambda_handler # <ファイル名>.<関数名>
       Runtime: python3.13
+
+  # --- パターン2: カスタムランタイム (Rust) ---
+  # 実行メモリを最小に抑えたい・コールドスタートを速くしたいケース向け。
+  # コンパイル済みバイナリを provided.al2023 (OS だけの素のランタイム) で動かす
+  HelloRustFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      # sam build に「cargo-lambda でビルドする」ことを伝える設定
+      BuildMethod: rust-cargolambda
+    Properties:
+      CodeUri: src/hello-rust/ # Cargo.toml があるディレクトリ
+      Handler: bootstrap # カスタムランタイムでは固定値 (バイナリ名)
+      Runtime: provided.al2023
+      MemorySize: 128 # 最小メモリ。Rust なら 128MB でも十分動く

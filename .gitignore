@@ -15,6 +15,11 @@
 # sam build の成果物
 .aws-sam/
 
+# --- Rust ---
+# cargo のビルド成果物
+target/
+# ライブラリではなくアプリケーションなので Cargo.lock はコミットする方針 (Rust の慣習)
+
 # --- Python ---
 __pycache__/
 *.pyc
