@@ -4,12 +4,14 @@
 set -u
 
 # 必須ツール: 「コマンド名|用途|インストール方法(macOS)」
+# terraform / tflint は Homebrew 公式 (homebrew-core) にないため mise で管理する。
+# リポジトリ直下の mise.toml にバージョンを固定してあるので `mise install` で一括導入できる。
 REQUIRED_TOOLS=(
-  "terraform|Terraform 本体 (IaC 記述と validate)|brew install terraform"
+  "terraform|Terraform 本体 (IaC 記述と validate)|mise install"
   "sam|AWS SAM CLI (template.yaml の validate)|brew install aws-sam-cli"
-  "tflint|Terraform の lint|brew install tflint"
-  "cfn-lint|CloudFormation / SAM の lint|brew install cfn-lint"
-  "checkov|IaC のセキュリティ静的解析|brew install checkov"
+  "tflint|Terraform の lint|mise install"
+  "cfn-lint|CloudFormation / SAM の lint|mise install"
+  "checkov|IaC のセキュリティ静的解析|mise install"
   "dot|Graphviz (構成図の描画エンジン)|brew install graphviz"
 )
 
