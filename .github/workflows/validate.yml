@@ -47,5 +47,5 @@ jobs:
           echo "$HOME/go/bin" >> "$GITHUB_PATH"
 
       # ローカルの学習サイクルと同じ一括チェックを実行する
-      - name: Run make check
-        run: make check
+      - name: Run checks
+        run: mise run check

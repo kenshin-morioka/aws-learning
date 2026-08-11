@@ -15,7 +15,7 @@ fi
 
 for cmd in inframap dot; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
-    echo "❌ $cmd が見つかりません。make check-tools を実行してください" >&2
+    echo "❌ $cmd が見つかりません。mise run check-tools を実行してください" >&2
     exit 1
   fi
 done

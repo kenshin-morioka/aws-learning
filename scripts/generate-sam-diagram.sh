@@ -15,7 +15,7 @@ if command -v mise >/dev/null 2>&1; then
 fi
 
 if ! command -v cfn-dia >/dev/null 2>&1; then
-  echo "❌ cfn-dia が見つかりません。make check-tools を実行してください" >&2
+  echo "❌ cfn-dia が見つかりません。mise run check-tools を実行してください" >&2
   exit 1
 fi
 

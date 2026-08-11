@@ -10,3 +10,73 @@ tflint = "0.64.0"
 # であることを確認済み (5.x のみ trusted publishing を使う運用のため)。この 1 バージョン
 # だけを検証済みとして除外する
 "npm:@mhlabs/cfn-diagram" = { version = "1.1.40", trust_policy_excludes = ["fast-xml-parser@4.5.7"] }
+
+# ---- タスク定義 (mise run <タスク名> で実行、mise tasks で一覧) ----
+#
+# 安全対策: このリポジトリは AWS へデプロイしない。
+# そのため apply / deploy / destroy タスクは意図的に存在しない。
+
+[tasks.check-tools]
+description = "必要な CLI がインストールされているか確認する"
+run = "bash scripts/check-tools.sh"
+
+[tasks.fmt]
+description = "Terraform コードをフォーマットする"
+run = "terraform -chdir=terraform fmt -recursive"
+
+[tasks.fmt-check]
+description = "フォーマット崩れがないか確認する (書き換えはしない)"
+run = "terraform -chdir=terraform fmt -check -recursive -diff"
+
+[tasks.validate-terraform]
+description = "terraform validate を実行する"
+# validate にはプロバイダの取得 (init) が必要。初回のみ実行される
+run = [
+  "test -d terraform/.terraform || terraform -chdir=terraform init -backend=false -input=false",
+  "terraform -chdir=terraform validate",
+]
+
+[tasks.validate-sam]
+description = "sam validate --lint を実行する (オフラインで完結)"
+run = "sam validate --lint --template-file sam/template.yaml"
+
+[tasks.validate]
+description = "Terraform と SAM を validate する"
+depends = ["validate-terraform", "validate-sam"]
+
+[tasks.lint-tflint]
+description = "Terraform の lint"
+run = "tflint --chdir=terraform"
+
+[tasks.lint-cfn]
+description = "CloudFormation / SAM の lint"
+run = "cfn-lint sam/template.yaml"
+
+[tasks.lint-checkov]
+description = "IaC のセキュリティ静的解析 (Terraform + SAM)"
+# --directory を複数同時に渡すと SAM 側が CloudFormation として
+# スキャンされないことがあるため、ディレクトリごとに実行する
+run = [
+  "checkov --directory terraform --quiet --compact",
+  "checkov --directory sam --quiet --compact",
+]
+
+[tasks.lint]
+description = "TFLint / cfn-lint / Checkov を実行する"
+depends = ["lint-tflint", "lint-cfn", "lint-checkov"]
+
+[tasks.diagram-terraform]
+description = "Terraform から構成図 (SVG) を生成する"
+run = "bash scripts/generate-terraform-diagram.sh"
+
+[tasks.diagram-sam]
+description = "SAM から構成図 (Mermaid) を生成する"
+run = "bash scripts/generate-sam-diagram.sh"
+
+[tasks.diagram]
+description = "Terraform と SAM の構成図を生成する"
+depends = ["diagram-terraform", "diagram-sam"]
+
+[tasks.check]
+description = "全チェックを一括実行する (fmt-check → validate → lint → diagram)"
+depends = ["check-tools", "fmt-check", "validate", "lint", "diagram"]
