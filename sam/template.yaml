@@ -1,0 +1,27 @@
+# SAM テンプレートの骨格。
+#
+# TODO: リソース (Lambda / API Gateway / DynamoDB など) は Resources 以下に実装していく。
+# アーキテクチャは自由に設計してよい。
+#
+# 検証コマンド:
+#   sam validate --lint   (AWS には接続しない)
+
+AWSTemplateFormatVersion: "2010-09-09"
+
+# Transform = このテンプレートを「SAM 記法」として解釈させる宣言。
+# AWS::Serverless::* という短縮記法が、デプロイ時に素の CloudFormation リソースへ展開される
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  AWS IaC 学習用の SAM テンプレート (骨格)。
+  このリポジトリは AWS へデプロイしない学習環境。
+
+Resources:
+  # プレースホルダ: CloudFormation は Resources を空にできないため、
+  # 最小の Lambda 関数を 1 つだけ定義している。実装を始めたら自由に置き換えてよい。
+  HelloFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/hello/ # コードの場所 (ディレクトリ)
+      Handler: app.lambda_handler # <ファイル名>.<関数名>
+      Runtime: python3.13
