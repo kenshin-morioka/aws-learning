@@ -3,6 +3,12 @@
 # 不足していても即エラーにはせず、最後にまとめて結果を表示する。
 set -u
 
+# mise 管理のツールも見つけられるように、mise の bin パスを PATH に追加する
+# (make などの非対話シェルから実行された場合は mise の PATH 設定が効いていないため)
+if command -v mise >/dev/null 2>&1; then
+  PATH="$(mise bin-paths 2>/dev/null | tr '\n' ':')${PATH}"
+fi
+
 # 必須ツール: 「コマンド名|用途|インストール方法(macOS)」
 # terraform / tflint は Homebrew 公式 (homebrew-core) にないため mise で管理する。
 # リポジトリ直下の mise.toml にバージョンを固定してあるので `mise install` で一括導入できる。

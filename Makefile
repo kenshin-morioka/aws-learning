@@ -3,13 +3,14 @@
 # 安全対策: このリポジトリは AWS へデプロイしない。
 # そのため apply / deploy / destroy ターゲットは意図的に存在しない。
 
-# シェルコマンド失敗時に即エラーにする
 SHELL := /bin/bash
-.SHELLFLAGS := -eu -o pipefail -c
 
-# mise 管理のツール (terraform / tflint など) を make の非対話シェルからも
-# 使えるように、mise の bin パスを PATH の先頭に追加する
-export PATH := $(shell command -v mise >/dev/null 2>&1 && mise bin-paths 2>/dev/null | tr '\n' ':')$(PATH)
+# terraform / tflint などは mise で管理している (mise.toml 参照)。
+# make の非対話シェルには mise の PATH 設定が効かないため、
+# mise があれば `mise exec -- <コマンド>` 経由で実行する。
+# (macOS 標準の GNU Make 3.81 は Makefile 内での PATH 変更を直接実行時に反映しないため)
+MISE := $(shell command -v mise 2>/dev/null)
+RUN := $(if $(MISE),$(MISE) exec --,)
 
 TERRAFORM_DIR := terraform
 SAM_DIR := sam
@@ -28,7 +29,7 @@ check-tools: ## 必要な CLI がインストールされているか確認す�
 	@bash scripts/check-tools.sh
 
 fmt: ## Terraform コードをフォーマットする
-	@echo "(ステップ2で実装予定: terraform fmt)"
+	$(RUN) terraform -chdir=$(TERRAFORM_DIR) fmt -recursive
 
 validate: ## Terraform と SAM を validate する
 	@echo "(ステップ4で実装予定: terraform validate / sam validate)"
