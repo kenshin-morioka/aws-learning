@@ -1,0 +1,20 @@
+# Rust 製 Lambda のプレースホルダ。
+# ビルドには cargo-lambda を使う (https://www.cargo-lambda.info/)
+[package]
+name = "hello-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# AWS 公式の Lambda ランタイムライブラリ
+lambda_runtime = "0.13"
+# 非同期ランタイム (lambda_runtime が必要とする)
+tokio = { version = "1", features = ["macros"] }
+serde_json = "1"
+
+# 省メモリ・省サイズ目的のリリースビルド設定
+[profile.release]
+opt-level = "z"   # サイズ優先の最適化
+lto = true        # リンク時最適化でバイナリを小さくする
+codegen-units = 1
+strip = true      # デバッグシンボルを除去
