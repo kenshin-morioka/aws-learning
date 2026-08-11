@@ -3,8 +3,11 @@
 # TODO: リソース (Lambda / API Gateway / DynamoDB など) は Resources 以下に実装していく。
 # アーキテクチャは自由に設計してよい。
 #
-# 検証コマンド:
-#   sam validate --lint   (AWS には接続しない)
+# 検証コマンド (リポジトリルートから実行する場合):
+#   sam validate --lint --template-file sam/template.yaml
+#     … cfn-lint によるローカル検証。AWS API を呼ばずオフラインで完結する (学習フローはこちら)
+#   sam validate --template-file sam/template.yaml
+#     … 基本検証のみだが IAM クライアントを作成するため AWS 認証情報とリージョン設定が必要
 
 AWSTemplateFormatVersion: "2010-09-09"
 
