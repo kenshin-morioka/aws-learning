@@ -7,6 +7,10 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
 
+# mise 管理のツール (terraform / tflint など) を make の非対話シェルからも
+# 使えるように、mise の bin パスを PATH の先頭に追加する
+export PATH := $(shell command -v mise >/dev/null 2>&1 && mise bin-paths 2>/dev/null | tr '\n' ':')$(PATH)
+
 TERRAFORM_DIR := terraform
 SAM_DIR := sam
 
