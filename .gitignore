@@ -1,0 +1,26 @@
+# --- Terraform ---
+# .terraform/ はプロバイダのバイナリ等がダウンロードされる作業ディレクトリ(巨大なのでコミットしない)
+.terraform/
+# state ファイルは「実際の AWS リソースの状態」を記録するもの。
+# 本リポジトリは apply しないので生成されないはずだが、念のため除外
+*.tfstate
+*.tfstate.*
+# plan の出力ファイル
+*.tfplan
+
+# NOTE: .terraform.lock.hcl は一般的にはコミット推奨(依存プロバイダのバージョン固定のため)。
+# 本リポジトリでも学習のためコミットする方針とし、除外しない。
+
+# --- SAM ---
+# sam build の成果物
+.aws-sam/
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+
+# --- エディタ / OS ---
+.DS_Store
+.idea/
+*.swp
