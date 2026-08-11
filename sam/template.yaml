@@ -27,6 +27,17 @@ Resources:
   # AWS がランタイムを管理してくれる標準的な形。まずはこちらが基本
   HelloFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      # checkov が指摘する下記 3 点は本来設計すべき項目だが、学習用プレースホルダの
+      # ため理由を明記した上でスキップする。本実装では各項目を設計判断すること
+      checkov:
+        skip:
+          - id: CKV_AWS_115 # 同時実行数制限: 暴走や下流サービス保護のための上限設定
+            comment: "learning placeholder"
+          - id: CKV_AWS_116 # DLQ: 失敗イベントを退避して調査・再処理できるようにする
+            comment: "learning placeholder"
+          - id: CKV_AWS_117 # VPC 配置: プライベートリソースへ安全にアクセスするため
+            comment: "learning placeholder"
     Properties:
       CodeUri: src/hello/ # コードの場所 (ディレクトリ)
       Handler: app.lambda_handler # <ファイル名>.<関数名>
@@ -40,6 +51,15 @@ Resources:
     Metadata:
       # sam build に「cargo-lambda でビルドする」ことを伝える設定
       BuildMethod: rust-cargolambda
+      # HelloFunction と同じ理由で学習用プレースホルダとしてスキップ
+      checkov:
+        skip:
+          - id: CKV_AWS_115
+            comment: "learning placeholder"
+          - id: CKV_AWS_116
+            comment: "learning placeholder"
+          - id: CKV_AWS_117
+            comment: "learning placeholder"
     Properties:
       CodeUri: src/hello-rust/ # Cargo.toml があるディレクトリ
       Handler: bootstrap # カスタムランタイムでは固定値 (バイナリ名)
