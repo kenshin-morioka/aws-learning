@@ -1,6 +1,8 @@
+# プロジェクトで使うツールとバージョンの固定 (mise install で一括導入)。
+# CI (GitHub Actions) でも同じ定義を使うため、"latest" ではなく明示的に固定する
 [tools]
-"pipx:checkov" = "latest"
-terraform = "latest"
-tflint = "latest"
-"pipx:cfn-lint" = "latest"
-"npm:@mhlabs/cfn-diagram" = "latest"
+terraform = "1.15.8"
+tflint = "0.64.0"
+"pipx:checkov" = "3.3.9"
+"pipx:cfn-lint" = "1.54.0"
+"npm:@mhlabs/cfn-diagram" = "1.1.40"
