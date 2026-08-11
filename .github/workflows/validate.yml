@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # このジョブは認証済み Git 操作をしないため GITHUB_TOKEN を保持しない
+          persist-credentials: false
 
       # mise.toml に固定したツール (terraform / tflint / checkov / cfn-lint / cfn-dia) を導入
       - uses: jdx/mise-action@v2
