@@ -3,6 +3,7 @@
 //! Python 版 (src/hello/) との違い:
 //! - Rust はコンパイル済みバイナリを custom runtime (provided.al2023) で動かす
 //! - GC やインタプリタが無いため、メモリ使用量とコールドスタートを最小化できる
+//!
 //! 実装を始めたら自由に置き換えてよい。
 
 use lambda_runtime::{service_fn, Error, LambdaEvent};
