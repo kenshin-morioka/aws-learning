@@ -1,0 +1,51 @@
+# push / PR のたびに IaC の静的チェックと構成図生成を検証するワークフロー。
+#
+# 安全対策:
+# - AWS credentials は一切使わない (GitHub Secrets にも設定しない)
+# - 実行するのは validate / lint / 図生成のみで、AWS へは接続しない
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# リポジトリの読み取りだけできれば十分
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # このジョブは認証済み Git 操作をしないため GITHUB_TOKEN を保持しない
+          persist-credentials: false
+
+      # mise.toml に固定したツール (terraform / tflint / checkov / cfn-lint / cfn-dia) を導入
+      - uses: jdx/mise-action@v2
+
+      # SAM CLI (mise 管理外なので公式 action で導入)
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      # 構成図生成用の Graphviz
+      - name: Install Graphviz
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq graphviz
+
+      # InfraMap はバイナリ配布が無いため Go でソースからインストールする
+      # (macOS ローカルでは brew install inframap でよい)
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+      - name: Install InfraMap
+        run: |
+          go install github.com/cycloidio/inframap@v0.8.1
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
+
+      # ローカルの学習サイクルと同じ一括チェックを実行する
+      - name: Run make check
+        run: make check

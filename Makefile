@@ -54,7 +54,10 @@ lint-cfn: ## CloudFormation / SAM の lint
 	$(RUN) cfn-lint $(SAM_DIR)/template.yaml
 
 lint-checkov: ## IaC のセキュリティ静的解析 (Terraform + SAM)
-	$(RUN) checkov --directory $(TERRAFORM_DIR) --directory $(SAM_DIR) --quiet --compact
+	@# --directory を複数同時に渡すと SAM 側が CloudFormation として
+	@# スキャンされないことがあるため、ディレクトリごとに実行する
+	$(RUN) checkov --directory $(TERRAFORM_DIR) --quiet --compact
+	$(RUN) checkov --directory $(SAM_DIR) --quiet --compact
 
 diagram: diagram-terraform diagram-sam ## Terraform と SAM の構成図を生成する
 
