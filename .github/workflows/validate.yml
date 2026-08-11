@@ -28,11 +28,20 @@ jobs:
         with:
           use-installer: true
 
-      # 構成図生成用: Graphviz は apt、InfraMap は Homebrew (ランナーに標準搭載) で導入
-      - name: Install diagram tools
+      # 構成図生成用の Graphviz
+      - name: Install Graphviz
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq graphviz
+
+      # InfraMap はバイナリ配布が無いため Go でソースからインストールする
+      # (macOS ローカルでは brew install inframap でよい)
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: false
+      - name: Install InfraMap
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq graphviz
-          brew install inframap
+          go install github.com/cycloidio/inframap@v0.8.1
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
 
       # ローカルの学習サイクルと同じ一括チェックを実行する
       - name: Run make check
