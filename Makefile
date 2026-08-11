@@ -15,7 +15,8 @@ RUN := $(if $(MISE),$(MISE) exec --,)
 TERRAFORM_DIR := terraform
 SAM_DIR := sam
 
-.PHONY: help check-tools fmt validate lint diagram check
+.PHONY: help check-tools fmt fmt-check validate validate-terraform validate-sam \
+	lint lint-tflint lint-cfn lint-checkov diagram check
 
 # デフォルトターゲット(make だけ打った場合)
 .DEFAULT_GOAL := help
@@ -31,13 +32,32 @@ check-tools: ## 必要な CLI がインストールされているか確認す�
 fmt: ## Terraform コードをフォーマットする
 	$(RUN) terraform -chdir=$(TERRAFORM_DIR) fmt -recursive
 
-validate: ## Terraform と SAM を validate する
-	@echo "(ステップ4で実装予定: terraform validate / sam validate)"
+fmt-check: ## フォーマット崩れがないか確認する (書き換えはしない)
+	$(RUN) terraform -chdir=$(TERRAFORM_DIR) fmt -check -recursive -diff
 
-lint: ## TFLint / Checkov / cfn-lint を実行する
-	@echo "(ステップ4で実装予定)"
+validate: validate-terraform validate-sam ## Terraform と SAM を validate する
+
+validate-terraform: ## terraform validate を実行する
+	@# validate にはプロバイダの取得 (init) が必要。初回のみ実行される
+	@test -d $(TERRAFORM_DIR)/.terraform || $(RUN) terraform -chdir=$(TERRAFORM_DIR) init -backend=false -input=false
+	$(RUN) terraform -chdir=$(TERRAFORM_DIR) validate
+
+validate-sam: ## sam validate --lint を実行する (オフラインで完結)
+	$(RUN) sam validate --lint --template-file $(SAM_DIR)/template.yaml
+
+lint: lint-tflint lint-cfn lint-checkov ## TFLint / cfn-lint / Checkov を実行する
+
+lint-tflint: ## Terraform の lint
+	$(RUN) tflint --chdir=$(TERRAFORM_DIR)
+
+lint-cfn: ## CloudFormation / SAM の lint
+	$(RUN) cfn-lint $(SAM_DIR)/template.yaml
+
+lint-checkov: ## IaC のセキュリティ静的解析 (Terraform + SAM)
+	$(RUN) checkov --directory $(TERRAFORM_DIR) --directory $(SAM_DIR) --quiet --compact
 
 diagram: ## Terraform と SAM の構成図を生成する
 	@echo "(ステップ5で実装予定)"
 
-check: check-tools fmt validate lint diagram ## 上記すべてを一括実行する
+# check では fmt (書き換え) ではなく fmt-check (確認のみ) を使う
+check: check-tools fmt-check validate lint diagram ## 上記すべてを一括実行する
