@@ -3,3 +3,4 @@
 terraform = "latest"
 tflint = "latest"
 "pipx:cfn-lint" = "latest"
+"npm:@mhlabs/cfn-diagram" = "latest"
