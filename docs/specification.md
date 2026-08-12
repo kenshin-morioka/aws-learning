@@ -338,12 +338,14 @@ GitHub の README 上で構成図が確認できる形式を最低1つ用意し�
 
 ---
 
-# mise tasks
+# mise のタスク
 
-リポジトリの操作は、できるだけ mise tasks から行えるようにしてください。
+リポジトリの操作は、できるだけ mise のタスクから行えるようにしてください。
+タスクは `mise.toml` の `[tasks.*]` に定義し、`mise run <タスク名>` で実行する
+(`mise tasks` は定義済みタスクの一覧を表示するコマンド)。
 
 (当初は Makefile を想定していたが、ツール管理に mise を採用した時点で
-タスクランナーも mise tasks に統一した)
+タスクランナーも mise に統一した)
 
 最低限以下を用意してください。
 
@@ -359,27 +361,27 @@ mise run check
 
 期待する意味は以下です。
 
-### mise run check-tools
+## mise run check-tools
 
 必要な CLI がインストールされているか確認する。
 
-### mise run fmt
+## mise run fmt
 
 Terraform などをフォーマットする。
 
-### mise run validate
+## mise run validate
 
 Terraform と SAM を validate する。
 
-### mise run lint
+## mise run lint
 
 TFLint / Checkov / cfn-lint などを実行する。
 
-### mise run diagram
+## mise run diagram
 
 Terraform と SAM の構成図を生成する。
 
-### mise run check
+## mise run check
 
 一括実行する。
 
@@ -402,7 +404,7 @@ SAM diagram          ✅
 
 このリポジトリから誤って AWS にデプロイしてしまわないようにしてください。
 
-mise tasks に以下は作らないでください。
+mise.toml のタスクとして以下は定義しないでください。
 
 ```text
 apply
@@ -645,7 +647,7 @@ examples/insecure/
 3. SAM を実装
 4. validate / lint 環境を作成
 5. diagram生成を実装
-6. mise tasks を作成
+6. mise.toml にタスクを定義
 7. GitHub Actionsを作成
 8. READMEを書く
 9. 実際にローカルで可能なコマンドを実行して検証
