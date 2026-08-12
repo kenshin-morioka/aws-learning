@@ -4,7 +4,7 @@
 set -u
 
 # mise 管理のツールも見つけられるように、mise の bin パスを PATH に追加する
-# (make などの非対話シェルから実行された場合は mise の PATH 設定が効いていないため)
+# (mise run 以外から直接実行された場合でも動くようにするため)
 if command -v mise >/dev/null 2>&1; then
   PATH="$(mise bin-paths 2>/dev/null | tr '\n' ':')${PATH}"
 fi
