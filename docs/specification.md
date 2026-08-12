@@ -57,7 +57,7 @@ AWS への接続が必要になる処理は作らないでください。
 - TFLint
 - Checkov
 - cfn-lint
-- Makefile
+- mise (ツール管理・タスクランナー)
 - GitHub Actions
 
 ただし、現在利用困難・非推奨・メンテナンス停止などの理由があるツールについては、目的を満たすより適切なOSSツールへ置き換えて構いません。
@@ -73,7 +73,7 @@ AWS への接続が必要になる処理は作らないでください。
 ```text
 aws-iac-study/
 ├── README.md
-├── Makefile
+├── mise.toml
 ├── .gitignore
 ├── .editorconfig
 │
@@ -338,45 +338,48 @@ GitHub の README 上で構成図が確認できる形式を最低1つ用意し�
 
 ---
 
-# Makefile
+# mise tasks
 
-リポジトリの操作は、できるだけ Makefile から行えるようにしてください。
+リポジトリの操作は、できるだけ mise tasks から行えるようにしてください。
+
+(当初は Makefile を想定していたが、ツール管理に mise を採用した時点で
+タスクランナーも mise tasks に統一した)
 
 最低限以下を用意してください。
 
 ```bash
-make help
-make check-tools
-make fmt
-make validate
-make lint
-make diagram
-make check
+mise tasks              # タスク一覧 (help 相当)
+mise run check-tools
+mise run fmt
+mise run validate
+mise run lint
+mise run diagram
+mise run check
 ```
 
 期待する意味は以下です。
 
-### make check-tools
+### mise run check-tools
 
 必要な CLI がインストールされているか確認する。
 
-### make fmt
+### mise run fmt
 
 Terraform などをフォーマットする。
 
-### make validate
+### mise run validate
 
 Terraform と SAM を validate する。
 
-### make lint
+### mise run lint
 
 TFLint / Checkov / cfn-lint などを実行する。
 
-### make diagram
+### mise run diagram
 
 Terraform と SAM の構成図を生成する。
 
-### make check
+### mise run check
 
 一括実行する。
 
@@ -399,7 +402,7 @@ SAM diagram          ✅
 
 このリポジトリから誤って AWS にデプロイしてしまわないようにしてください。
 
-Makefile に以下は作らないでください。
+mise tasks に以下は作らないでください。
 
 ```text
 apply
@@ -468,7 +471,7 @@ README は特に丁寧に作ってください。
 ```text
 IaCを書く
    ↓
-make check
+mise run check
    ↓
 validate / lint
    ↓
@@ -512,7 +515,7 @@ macOS の場合は Homebrew を中心に説明してください。
 可能なら、
 
 ```bash
-make check-tools
+mise run check-tools
 ```
 
 で不足ツールが分かるようにしてください。
@@ -520,7 +523,7 @@ make check-tools
 ## 基本操作
 
 ```bash
-make check
+mise run check
 ```
 
 だけで一連の処理が実行できることを説明してください。
@@ -622,7 +625,7 @@ examples/insecure/
 7. SAM / CloudFormation の lint ができる
 8. Terraform から構成図を生成できる
 9. SAM から構成図を生成できる
-10. `make check` で主要処理をまとめて実行できる
+10. `mise run check` で主要処理をまとめて実行できる
 11. README に生成した AWS 構成図が表示される
 12. GitHub Actions でも AWS credentials なしで静的チェックできる
 13. `.gitignore` が適切に設定されている
@@ -642,7 +645,7 @@ examples/insecure/
 3. SAM を実装
 4. validate / lint 環境を作成
 5. diagram生成を実装
-6. Makefile を作成
+6. mise tasks を作成
 7. GitHub Actionsを作成
 8. READMEを書く
 9. 実際にローカルで可能なコマンドを実行して検証
@@ -683,7 +686,7 @@ AWSへのログインやデプロイもしないでください。
 最終的に、
 
 ```bash
-make check
+mise run check
 ```
 
 を実行すると、
