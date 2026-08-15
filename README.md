@@ -38,8 +38,9 @@ brew install aws-sam-cli graphviz inframap
 mise run check-tools
 ```
 
-Linux の場合は 3 を各ディストリビューションのパッケージマネージャで導入してください
-(InfraMap はバイナリ配布が無いため `go install github.com/cycloidio/inframap@v0.8.1`)。
+Linux でも Homebrew (Linuxbrew) が使えれば手順は同じです。brew を使わない場合、
+InfraMap は v0.8.1 のリリースバイナリが提供されていないため Go 環境で
+`go install github.com/cycloidio/inframap@v0.8.1` を実行してください (CI もこの方式)。
 
 ## 基本操作
 
@@ -71,7 +72,7 @@ mise tasks          # タスク一覧
 
 ### ツール選定の補足
 
-- **Terraform / TFLint を mise で管理する理由**: Terraform は 2023 年の BUSL ライセンス変更により Homebrew 公式 (homebrew-core) から削除されており、brew では入らないため
+- **Terraform / TFLint を mise で管理する理由**: Terraform は 2023 年の BUSL ライセンス変更により homebrew-core から削除された (HashiCorp 公式 tap 経由なら brew でも導入可能)。本リポジトリでは mise.toml によるバージョン固定と、CI・他環境での再現性を優先して mise に統一している
 - **Makefile ではなく mise tasks の理由**: ツール導入に mise が必須である以上、タスクランナーも mise に統一する方が構成が単純になるため (`mise run` はツールの PATH 解決も自動で効く)
 - **InfraMap**: メンテナンス状況を確認の上採用 (2026-04 に v0.8.1 リリース、現役)
 
@@ -138,7 +139,7 @@ Checkov の警告は「なぜその設定が重要か」を学ぶ教材として
 | ARN | AWS リソースを一意に識別する ID (Amazon Resource Name) |
 | IAM policy | 「誰が・何に・どんな操作を」許可するかの定義 |
 | VPC | AWS 上に作る自分専用の仮想ネットワーク |
-| Subnet | VPC を分割した区画。インターネットへの経路があると Public、無いと Private |
+| Subnet | VPC を分割した区画。ルートテーブルに Internet Gateway への経路があると Public。NAT Gateway 経由の外向き通信だけなら Private |
 | Security Group | インスタンスや Lambda に付ける仮想ファイアウォール |
 
 ## ディレクトリ構成
